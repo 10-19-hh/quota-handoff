@@ -8,20 +8,18 @@ Record the first GitHub Actions run of `.github/workflows/test.yml` for the rele
 
 | Field | Value |
 |---|---|
-| Run URL | _not recorded_ |
-| Commit the run tested | _not recorded_ (must equal the release commit) |
-| Confirmed by | _not recorded_ |
-| Status | **Not confirmed.** No run URL or job results have been recorded yet. Independent verification has not been done. |
+| Run URL | <https://github.com/10-19-hh/quota-handoff/actions/runs/44336266947> |
+| Commit the run tested | `b1789d0e79c47bfcfd97d32f22ceab1417e5aa3f` ("Fix release blockers and document security limitations") |
+| Confirmed by | Final code review (T-011), which checked the run record and the job conclusions through the GitHub connection |
+| Status | **success, 12/12 jobs** (Ubuntu 4/4, Windows 4/4, macOS 4/4) |
 
-The repository was private at the time of review, so the run could not be read without the maintainer's GitHub login.
-
-Expected jobs: 12, all `success`.
+The release-preparation commit for `0.1.2` (version metadata and docs only, no code change) comes after `b1789d0`. It needs its own green run, which starts automatically when it is pushed.
 
 | OS | 3.11 | 3.12 | 3.13 | 3.14 |
 |---|---|---|---|---|
-| ubuntu-latest | _?_ | _?_ | _?_ | _?_ |
-| macos-latest | _?_ | _?_ | _?_ | _?_ |
-| windows-latest | _?_ | _?_ | _?_ | _?_ |
+| ubuntu-latest | success | success | success | success |
+| macos-latest | success | success | success | success |
+| windows-latest | success | success | success | success |
 
 Notes:
 

@@ -7,7 +7,7 @@ A local-first, **read-only** CLI that:
 3. renders a **handoff document** from a checkpoint you write, so you can continue the work in a session you open yourself.
 
 It never starts agents, calls model APIs, reads credential files, touches Git, or changes OS settings.
-Status: `0.1.2.dev0` (pre-release, fixture and demo data only). MIT licensed. Not affiliated with any agent vendor.
+Status: `0.1.2` (fixture and demo data only; not published on PyPI). MIT licensed. Not affiliated with any agent vendor.
 
 ## Install
 
@@ -149,7 +149,7 @@ python -m unittest discover -s tests -t .
 
 Run the tests from a repository checkout or an unpacked sdist; the wheel does not include `tests/`.
 
-CI (`.github/workflows/test.yml`) runs on Windows, Linux and macOS with Python 3.11–3.14. It runs the tests, builds the wheel and sdist, and runs the installed CLI. **No CI result has been recorded yet:** run URLs and per-job results, once confirmed, go in `docs/RELEASE_CHECKLIST.md`. Until then, verified results come only from local Windows runs with Python 3.11, 3.13 and 3.14.
+CI (`.github/workflows/test.yml`) runs on Windows, Linux and macOS with Python 3.11–3.14. It runs the tests, builds the wheel and sdist, and runs the installed CLI. The first recorded run passed all 12 jobs (3 OSes × 4 Python versions) on commit `b1789d0`. The run URL and how it was checked are recorded in `docs/RELEASE_CHECKLIST.md`. Each later commit needs its own green run.
 
 See `docs/SECURITY.md` for the security boundary and what the tests do and do not verify. Review records are in `docs/REVIEW-M0.1.md` and `docs/REVIEW-M0.2-INDEPENDENT.md`.
 

@@ -1,5 +1,5 @@
-# NOTE: this workflow has not been executed yet. Until a run is green on every matrix
-# entry, results come only from local Windows runs (Python 3.11 / 3.13 / 3.14).
+# First recorded run: 12/12 jobs succeeded on commit b1789d0 (see docs/RELEASE_CHECKLIST.md).
+# Every commit to be released needs its own green run on all matrix entries.
 name: test
 
 on:
