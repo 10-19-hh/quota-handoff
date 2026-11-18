@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.2",
+  "description": "Synthetic sample. Numbers are made up; account labels are arbitrary.",
+  "snapshots": [
+    {
+      "provider": "codex",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": "2026-11-18T09:00:00+09:00",
+      "status": "available",
+      "windows": [
+        {"key": "5h", "used_pct": 42, "resets_at": null},
+        {"key": "weekly", "used_pct": 65, "resets_at": "2026-11-21T00:00:00+09:00"}
+      ]
+    },
+    {
+      "provider": "claude",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": "2026-11-18T08:59:30+09:00",
+      "status": "available",
+      "windows": [
+        {"key": "5h", "used_pct": 10, "resets_at": null},
+        {"key": "weekly", "used_pct": 30, "resets_at": "2026-11-20T09:00:00+09:00"}
+      ]
+    }
+  ]
+}

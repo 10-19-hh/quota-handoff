@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.2",
+  "description": "Synthetic sample: 5h window is low but weekly is near the limit (AT-02).",
+  "snapshots": [
+    {
+      "provider": "claude",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": "2026-11-18T09:00:00+09:00",
+      "status": "available",
+      "windows": [
+        {"key": "5h", "used_pct": 60, "resets_at": null},
+        {"key": "weekly", "used_pct": 97, "resets_at": null}
+      ]
+    },
+    {
+      "provider": "codex",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": "2026-11-18T09:00:00+09:00",
+      "status": "available",
+      "windows": [
+        {"key": "5h", "used_pct": 99, "resets_at": null},
+        {"key": "weekly", "used_pct": 50, "resets_at": null}
+      ]
+    }
+  ]
+}

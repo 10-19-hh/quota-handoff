@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.2",
+  "description": "Synthetic sample: one provider stale, one not reporting usage. Expect manual_decision_required.",
+  "snapshots": [
+    {
+      "provider": "claude",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": "2026-11-18T08:40:00+09:00",
+      "status": "available",
+      "windows": [
+        {"key": "5h", "used_pct": 5, "resets_at": null},
+        {"key": "weekly", "used_pct": 20, "resets_at": null}
+      ]
+    },
+    {
+      "provider": "codex",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": null,
+      "status": "unknown",
+      "windows": []
+    }
+  ]
+}

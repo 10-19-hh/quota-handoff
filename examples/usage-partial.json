@@ -1,0 +1,29 @@
+{
+  "schema_version": "0.2",
+  "description": "Synthetic sample: codex has a failed weekly lookup (partial, not auto-selected) and an unsupported monthly window (ignored).",
+  "snapshots": [
+    {
+      "provider": "claude",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": "2026-11-18T09:00:00+09:00",
+      "status": "available",
+      "windows": [
+        {"key": "5h", "used_pct": 40, "resets_at": null},
+        {"key": "weekly", "used_pct": 55, "resets_at": null}
+      ]
+    },
+    {
+      "provider": "codex",
+      "account_label": "local-primary",
+      "source": "fixture",
+      "observed_at": "2026-11-18T09:00:00+09:00",
+      "status": "available",
+      "windows": [
+        {"key": "5h", "used_pct": 12, "resets_at": null},
+        {"key": "weekly", "used_pct": null, "resets_at": null, "state": "failed"},
+        {"key": "monthly", "used_pct": null, "resets_at": null, "state": "unsupported"}
+      ]
+    }
+  ]
+}

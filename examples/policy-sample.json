@@ -1,0 +1,8 @@
+{
+  "schema_version": "0.2",
+  "policy_version": "sample-0.1",
+  "description": "Thresholds are policy examples, not predictions of real limits. task_preferences apply only among safe candidates.",
+  "thresholds": {"warning": 80, "near_limit": 95},
+  "freshness": {"max_age_seconds": 300, "future_tolerance_seconds": 60},
+  "task_preferences": {"code": "codex", "review": "claude"}
+}
