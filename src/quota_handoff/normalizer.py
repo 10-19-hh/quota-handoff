@@ -11,7 +11,7 @@ Rules (PRD F1):
 
 import math
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from quota_handoff.errors import InputError
 from quota_handoff.redact import safe_name  # noqa: F401  (re-exported for policy/handoff)
@@ -33,8 +33,22 @@ WINDOW_KEYS_V01 = {"key", "used_pct", "resets_at"}
 WINDOW_KEYS = WINDOW_KEYS_V01 | {"state"}  # schema 0.2
 
 
+# Timestamps must stay at least this far inside datetime's range, so later arithmetic
+# (age, demo observation time) cannot overflow.
+_TIMESTAMP_MARGIN = timedelta(days=2)
+
+
 def is_number(value):
-    return type(value) in (int, float) and math.isfinite(value)
+    """Finite int or float (not bool). Arbitrarily large ints are numbers; callers check ranges."""
+    if type(value) is int:
+        return True
+    return type(value) is float and math.isfinite(value)
+
+
+def show_number(value):
+    """Short rendering of a rejected number for error messages (very long numbers are summarized)."""
+    text = repr(value)
+    return text if len(text) <= 24 else f"a {len(text)}-character number"
 
 
 def parse_timestamp(value, path, issues):
@@ -48,6 +62,12 @@ def parse_timestamp(value, path, issues):
         return None
     if parsed.tzinfo is None or parsed.utcoffset() is None:
         issues.append(f"{path}: timestamp must include a UTC offset (e.g. +09:00 or Z)")
+        return None
+    try:
+        (parsed - _TIMESTAMP_MARGIN).astimezone(timezone.utc)
+        (parsed + _TIMESTAMP_MARGIN).astimezone(timezone.utc)
+    except OverflowError:
+        issues.append(f"{path}: timestamp is outside the supported date range")
         return None
     return parsed
 
@@ -94,7 +114,7 @@ def _normalize_window(raw, path, issues, version):
             issues.append(f"{path}.used_pct: expected number or null, got {type(used).__name__}")
             used = None
         elif not 0 <= used <= 100:
-            issues.append(f"{path}.used_pct: {used} is outside [0, 100]")
+            issues.append(f"{path}.used_pct: {show_number(used)} is outside [0, 100]")
             used = None
     state = raw.get("state")
     if state is None:

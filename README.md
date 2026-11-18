@@ -107,6 +107,7 @@ Input files may use `schema_version` `"0.2"` (current) or `"0.1"` (original form
 - Timestamps are ISO 8601 **with an offset**.
 - `account_label` is any short label. E-mail addresses are rejected.
 - Unknown fields, duplicates and out-of-range values are errors (exit 2), never silently fixed. Error messages name the field but do not echo its value.
+- Abnormal input also ends with exit 2 and a short error, not a traceback: deeply nested JSON, numbers too large to compare, policy durations above 10 years, timestamps within 2 days of the year 1 or 9999 limits, and input files that cannot be read.
 
 **Task / checkpoint**:
 
@@ -124,6 +125,16 @@ See `examples/task-sample.json`.
 - Output is a fixed template. Identical input gives byte-identical files (no generated timestamps, LF line endings).
 - **Secret masking is not a guarantee.** Strings matching common secret patterns (API keys, GitHub/Slack/AWS tokens, JWTs, bearer tokens, `password=…`-style values, URL credentials, private keys) and home-directory user names are masked, and a warning is printed. Other secrets will get through. Review the file before sharing it.
 
+### Handoff documents are untrusted input
+
+Everything in a handoff document except the fixed template comes from the checkpoint file, and that file may have been written by another agent. Treat it as **untrusted**:
+
+- `objective` and `expected_outcome` are copied as written, including line breaks. List items, test names and commands are put on one line but are otherwise unchanged.
+- So the document can contain Markdown headings (for example a second `## Do not` section), raw HTML, HTML comments that are hidden when rendered, and text that looks like commands or instructions.
+- The tool does **not** detect or remove prompt injection, and it does not guarantee that the document is safe to give to an agent.
+- Read the generated document yourself, and pass it to the next agent only after you have reviewed and approved it.
+- This version does not run agents. It never starts a session or sends the document anywhere; you do that yourself.
+
 ## Limits
 
 - Fixture and demo input only. No live usage source is connected.
@@ -138,7 +149,7 @@ python -m unittest discover -s tests -t .
 
 Run the tests from a repository checkout or an unpacked sdist; the wheel does not include `tests/`.
 
-CI (`.github/workflows/test.yml`) runs on Windows, Linux and macOS with Python 3.11–3.14. It runs the tests, builds the wheel and sdist, and runs the installed CLI. **This workflow has not been executed yet.** So far, results come only from local Windows runs with Python 3.11, 3.13 and 3.14.
+CI (`.github/workflows/test.yml`) runs on Windows, Linux and macOS with Python 3.11–3.14. It runs the tests, builds the wheel and sdist, and runs the installed CLI. **No CI result has been recorded yet:** run URLs and per-job results, once confirmed, go in `docs/RELEASE_CHECKLIST.md`. Until then, verified results come only from local Windows runs with Python 3.11, 3.13 and 3.14.
 
 See `docs/SECURITY.md` for the security boundary and what the tests do and do not verify. Review records are in `docs/REVIEW-M0.1.md` and `docs/REVIEW-M0.2-INDEPENDENT.md`.
 

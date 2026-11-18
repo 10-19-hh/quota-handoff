@@ -23,7 +23,8 @@
 ## What error messages may contain
 
 - **String values from input files are never echoed.** This includes `schema_version`, timestamps and `source`. Messages name the field path (for example `snapshots[0].observed_at`) and, for a rejected `schema_version`, only its type or length.
-- Numeric range errors show the rejected number (for example `used_pct: 120 is outside [0, 100]`).
+- Numeric range errors show the rejected number (for example `used_pct: 120 is outside [0, 100]`). A number longer than 24 characters is shown only as its length.
+- Abnormal input (deeply nested JSON, numbers too large to compare, policy durations above 10 years, timestamps within 2 days of the `datetime` limits, unreadable input files) ends with a short error and exit 2. A last-resort guard turns any remaining `RecursionError`, `OverflowError` or `OSError` into exit 2 and prints only the exception type, never its text.
 - Input-controlled field names (unknown or duplicate JSON keys) are masked with the secret patterns below and truncated to 40 characters.
 - Paths you passed on the command line are shown as given.
 - Rendered handoff documents contain your checkpoint text, after masking. That is the purpose of the tool, not an error message.
@@ -43,7 +44,7 @@
 |---|---|---|
 | Static AST scan of `src/` (`test_cli.py`, `test_hardening.py`) | No imports of process, network, registry or dynamic-import modules. No calls to `eval`/`exec`/`__import__`. No `os.system`/`popen`/`startfile`. File-writing calls only in `jsonio.py`. No reads of the environment or home directory. | Indirect or obfuscated access (for example via `getattr` strings). Behavior of the Python standard library itself. |
 | Runtime patching (`forbid_side_effects`) | Every CLI command runs with `subprocess.*`, `os.system`/`popen`/`exec*`/`spawn*`/`startfile` and `socket.socket`/`create_connection` replaced by functions that fail. | Native code paths and entry points that were not patched. It is a regression signal, not a sandbox. |
-| Output tests (`test_release_fixes.py`, `test_output_conflicts.py`) | Pre-checks, rollback after I/O failure, input protection, and output conflicts (case-only, relative/absolute, `..`, hard link, symlink, Unicode form). In each conflict case, file writes and deletions are patched to fail, and existing files are compared byte for byte. | Real macOS/Linux runs (not yet executed), concurrent writers, network file systems. Symlink tests are skipped where the user may not create symlinks (default Windows). |
+| Output tests (`test_release_fixes.py`, `test_output_conflicts.py`) | Pre-checks, rollback after I/O failure, input protection, and output conflicts (case-only, relative/absolute, `..`, hard link, symlink, Unicode form). In each conflict case, file writes and deletions are patched to fail, and existing files are compared byte for byte. | Real macOS/Linux runs (no CI result recorded yet; see `docs/RELEASE_CHECKLIST.md`), concurrent writers, network file systems. Symlink tests are skipped where the user may not create symlinks (default Windows). |
 
 ## What it does not guarantee
 
@@ -51,10 +52,28 @@
 - **Usage numbers are observations**, not guarantees of remaining quota. A recommendation is advice that needs manual approval. It never triggers an action.
 - The tool runs with your normal user permissions. It does not add isolation or "harden" anything.
 
+## Handoff documents are untrusted input
+
+A handoff document is built from a checkpoint file that another agent may have written. Treat its content as **untrusted**.
+
+- `objective` and `expected_outcome` are copied as written, including line breaks. Other fields are put on one line but are otherwise unchanged.
+- The document can therefore contain Markdown headings (for example a second `## Do not` section that contradicts the real one), raw HTML, HTML comments that are hidden when rendered, and text that looks like commands or instructions to an agent.
+- The tool does **not** detect, neutralize or remove prompt injection. Secret masking (above) is unrelated and does not make the content safe.
+- Review the generated document yourself and pass it to the next agent only after you have approved it.
+- This version does not run agents. It never starts a session, sends the document anywhere or acts on its content. Automatic agent execution is not supported.
+
 ## Live adapters (M1+)
 
 The conditions for adding any live, read-only adapter are listed in `docs/REVIEW-M0.1.md` ("M1 entry conditions"). Executing agents is out of scope for v0.1.
 
-## Reporting
+## Reporting a vulnerability
 
-Until a public repository exists, report issues privately to the maintainer.
+Please do not report security issues in public issues, discussions or pull requests.
+
+Report them privately through GitHub Security Advisories:
+
+1. Open <https://github.com/10-19-hh/quota-handoff/security/advisories/new> (or the repository's **Security** tab → **Report a vulnerability**).
+2. Describe the issue, the affected version or commit, and the steps to reproduce it. Use synthetic data only. Never include real tokens, credentials or private usage data.
+3. The maintainer replies in the advisory. A fix and an advisory are published together, after the fix is available.
+
+**Current status:** the repository is not public yet, and private vulnerability reporting is **not enabled yet**, so the link above does not work for outside reporters. Enabling it and testing the link are release steps in `docs/RELEASE_CHECKLIST.md`.

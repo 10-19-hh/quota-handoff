@@ -1,6 +1,7 @@
 """Strict JSON reading and checked file writing.
 
 Reading: size-limited, UTF-8 (BOM tolerated), duplicate keys and NaN/Infinity rejected.
+Read errors and too-deep nesting are reported as input errors (exit 2).
 
 Writing (`write_text_files`), for one or more explicit output paths:
 1. Every target is checked before anything is written or deleted: target is not one of the
@@ -50,6 +51,8 @@ def loads_strict(text, label="input"):
         raise InputError(f"{label}: invalid JSON at line {exc.lineno} column {exc.colno}: {exc.msg}") from None
     except ValueError as exc:
         raise InputError(f"{label}: {exc}") from None
+    except RecursionError:
+        raise InputError(f"{label}: JSON is nested too deeply") from None
 
 
 def read_json_file(path, label):
@@ -65,7 +68,11 @@ def read_json_file(path, label):
     if size > MAX_INPUT_BYTES:
         raise InputError(f"{label}: file is larger than {MAX_INPUT_BYTES} bytes")
     try:
-        text = path.read_bytes().decode("utf-8-sig")
+        data = path.read_bytes()
+    except OSError as exc:
+        raise InputError(f"{label}: cannot read {path}: {exc.strerror or type(exc).__name__}") from None
+    try:
+        text = data.decode("utf-8-sig")
     except UnicodeDecodeError:
         raise InputError(f"{label}: file is not valid UTF-8") from None
     return loads_strict(text, label)

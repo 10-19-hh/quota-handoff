@@ -29,6 +29,9 @@ from quota_handoff.errors import InputError
 from quota_handoff.models import MISSING_WINDOW_STATES, UNCERTAIN_STATUSES
 from quota_handoff.normalizer import PROVIDER_RE, check_schema_version, is_number, safe_name
 
+# Upper bound for policy durations (10 years). Larger values are rejected, not clamped.
+MAX_POLICY_SECONDS = 10 * 366 * 24 * 3600
+
 RECOMMENDED = "recommended"
 MANUAL = "manual_decision_required"
 NO_ELIGIBLE = "no_eligible_provider"
@@ -137,6 +140,9 @@ def load_policy(doc, label="policy"):
         value = container.get(source_key, default)
         if not is_number(value) or value < 0:
             issues.append(f"{label}.{section}.{source_key}: expected non-negative number")
+            value = default
+        elif section == "freshness" and value > MAX_POLICY_SECONDS:
+            issues.append(f"{label}.{section}.{source_key}: must be at most {MAX_POLICY_SECONDS} seconds")
             value = default
         values[name] = value
     for section, allowed in (("thresholds", {"warning", "near_limit"}),

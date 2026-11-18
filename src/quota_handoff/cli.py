@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from quota_handoff import __version__
 from quota_handoff.adapters.demo import DemoProvider
 from quota_handoff.adapters.fixture import FixtureProvider
-from quota_handoff.errors import EXIT_OK, EXIT_UNCERTAIN, InputError, QuotaHandoffError
+from quota_handoff.errors import EXIT_INPUT_ERROR, EXIT_OK, EXIT_UNCERTAIN, InputError, QuotaHandoffError
 from quota_handoff.handoff import load_task, render_markdown, to_json_dict
 from quota_handoff.jsonio import read_json_file, same_file, write_text_files
 from quota_handoff.normalizer import PROVIDER_RE, parse_timestamp
@@ -163,6 +163,11 @@ def main(argv=None, out=None, err=None):
     except QuotaHandoffError as exc:
         err.write(f"error: {exc}\n")
         return exc.exit_code
+    except (RecursionError, OverflowError, OSError) as exc:
+        # Last-resort guard for abnormal input: no traceback, and only the exception type is shown,
+        # so no input text can be echoed. Known cases are reported more precisely before this.
+        err.write(f"error: input could not be processed ({type(exc).__name__})\n")
+        return EXIT_INPUT_ERROR
 
 
 if __name__ == "__main__":
