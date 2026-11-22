@@ -8,12 +8,12 @@ Record the first GitHub Actions run of `.github/workflows/test.yml` for the rele
 
 | Field | Value |
 |---|---|
-| Run URL | <https://github.com/10-19-hh/quota-handoff/actions/runs/44336266947> |
-| Commit the run tested | `b1789d0e79c47bfcfd97d32f22ceab1417e5aa3f` ("Fix release blockers and document security limitations") |
-| Confirmed by | Final code review (T-011), which checked the run record and the job conclusions through the GitHub connection |
-| Status | **success, 12/12 jobs** (Ubuntu 4/4, Windows 4/4, macOS 4/4) |
+| Run URL | <https://github.com/10-19-hh/quota-handoff/actions/runs/44352678205> |
+| Commit the run tested | `45165ca9671153ef04d883c280282ef6d9787917` ("Prepare v0.1.2 release"), the release commit for `0.1.2` |
+| Confirmed by | Maintainer, by reading the run record and each job conclusion with `gh run view 44352678205` (event `push`, status `completed`, conclusion `success`) |
+| Status | **success, 12/12 jobs** (Ubuntu 4/4, Windows 4/4, macOS 4/4); maintainer-confirmed, independent verification not done |
 
-The release-preparation commit for `0.1.2` (version metadata and docs only, no code change) comes after `b1789d0`. It needs its own green run, which starts automatically when it is pushed.
+Earlier run: <https://github.com/10-19-hh/quota-handoff/actions/runs/44336266947> passed 12/12 on `b1789d0` ("Fix release blockers and document security limitations"), confirmed by the final code review (T-011). The release commit `45165ca` changes version metadata and docs only, and has its own green run above.
 
 | OS | 3.11 | 3.12 | 3.13 | 3.14 |
 |---|---|---|---|---|
@@ -29,11 +29,13 @@ Notes:
 
 ## 2. Before making the repository public
 
-- [ ] CI evidence above is filled in: 12/12 `success` on the release commit.
-- [ ] `python -m unittest discover -s tests -t .` passes locally.
-- [ ] Wheel and sdist build. The sdist contains `examples/` and `docs/`. The wheel installs in a clean venv, and `quota-handoff status --demo` and `plan --demo` work outside the checkout.
-- [ ] The public-file scan for personal paths, e-mail addresses and secret patterns passes (`tests/test_hardening.py`).
-- [ ] Commit author and committer use the GitHub `noreply` address.
+These items were checked after the repository was already public, against the release commit `45165ca`.
+
+- [x] CI evidence above is filled in: 12/12 `success` on the release commit (run 44352678205).
+- [x] `python -m unittest discover -s tests -t .` passes locally (Windows, Python 3.14: 203 tests, OK, 2 skipped because symlinks are not permitted for this user).
+- [x] Wheel and sdist build (`python -m build` in a temporary venv, from a clean export of `45165ca`). The sdist contains `examples/` (6 files) and `docs/` (6 files) and no `__pycache__` or `.pyc`. The wheel installs in a clean Python 3.11 venv, and `quota-handoff status --demo` and `plan --demo` exit 0 when run from a directory outside the checkout.
+- [x] The public-file scan for personal paths, e-mail addresses and secret patterns passes (`tests/test_hardening.py`, `PublicContentTests`: 2/2 OK).
+- [x] Commit author and committer use the GitHub `noreply` address (all 3 commits up to `45165ca`).
 
 ## 3. Right after making the repository public
 

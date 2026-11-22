@@ -149,7 +149,7 @@ python -m unittest discover -s tests -t .
 
 Run the tests from a repository checkout or an unpacked sdist; the wheel does not include `tests/`.
 
-CI (`.github/workflows/test.yml`) runs on Windows, Linux and macOS with Python 3.11–3.14. It runs the tests, builds the wheel and sdist, and runs the installed CLI. The first recorded run passed all 12 jobs (3 OSes × 4 Python versions) on commit `b1789d0`. The run URL and how it was checked are recorded in `docs/RELEASE_CHECKLIST.md`. Each later commit needs its own green run.
+CI (`.github/workflows/test.yml`) runs on Windows, Linux and macOS with Python 3.11–3.14. It runs the tests, builds the wheel and sdist, and runs the installed CLI. The run for the `0.1.2` release commit `45165ca` passed all 12 jobs (3 OSes × 4 Python versions); this was confirmed by the maintainer and not independently verified. The run URL and how it was checked are recorded in `docs/RELEASE_CHECKLIST.md`. Each later commit needs its own green run.
 
 See `docs/SECURITY.md` for the security boundary and what the tests do and do not verify. Review records are in `docs/REVIEW-M0.1.md` and `docs/REVIEW-M0.2-INDEPENDENT.md`.
 
